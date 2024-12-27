@@ -1,63 +1,53 @@
-const gameContainer = document.querySelector('.container'),
-userResult = document.querySelector('.user_result img'),
-cpuResult = document.querySelector('.cpu_result img'),
-result = document.querySelector('.result'),
-optionImages = document.querySelectorAll('.option_image');
+const gameContainer = document.querySelector('.container');
+const userResult = document.querySelector('.user_result img');
+const cpuResult = document.querySelector('.cpu_result img');
+const result = document.querySelector('.result');
+const optionImages = document.querySelectorAll('.option_image');
 
+let timeoutId;
 
+const outcomes = {
+    RR: "Draw",
+    RP: "CPU",
+    RS: "User",
+    PP: "Draw",
+    PR: "User",
+    PS: "CPU",
+    SS: "Draw",
+    SR: "CPU",
+    SP: "User"
+};
 
+const cpuImages = ["images/rock.png", "images/paper.png", "images/scissors.png"];
+const moves = ["R", "P", "S"];
 
 optionImages.forEach((image, index) => {
-image.addEventListener("click", (e) => {
-    image.classList.add("active");
+    image.addEventListener("click", () => {
+        clearTimeout(timeoutId);
+        
+        optionImages.forEach((img, idx) => {
+            img.classList.toggle("active", idx === index);
+        });
+        
+        userResult.src = cpuResult.src = "images/rock.png";
+        result.textContent = "Wait...";
+        gameContainer.classList.add("start");
 
-userResult.src = cpuResult.src = "images/rock.png";
-result.textContent = "Wait...";
-
-    optionImages.forEach((image2,index2) => {
-        index !== index2 && image2.classList.remove("active");
+        timeoutId = setTimeout(() => {
+            const userImg = image.querySelector('img');
+            userResult.src = userImg.src;
+            
+            const randomNumber = Math.floor(Math.random() * 3);
+            cpuResult.src = cpuImages[randomNumber];
+            
+            const userValue = moves[index];
+            const cpuValue = moves[randomNumber];
+            const outcome = outcomes[userValue + cpuValue];
+            
+            result.textContent = userValue === cpuValue ? "Match Draw" : `${outcome} Won!!`;
+            gameContainer.classList.remove("start");
+        }, 2500);
     });
-
- gameContainer.classList.add("start");
-
-
-let time = setTimeout(() => {
-    let imageSrc = e.target.querySelector('img').src;
-    userResult.src = imageSrc;
-  
-    gameContainer.classList.remove("start");
- 
-    let randomNumber = Math.floor(Math.random() *3);
- 
-     let cpuImage = ["images/rock.png", "images/paper.png", "images/scissors.png"];
-      cpuResult.src = cpuImage[randomNumber];
- 
-      let cpuValue = ["R", "P", "S"][randomNumber];
- 
-      let userValue = ["R", "P", "S"][index];
- 
-     let outComes = {
-         RR: "Draw",
-         RP: "Cpu",
-         RS: "User",
-         PP: "Draw",
-         PR: "User",
-         PS: "Cpu",
-         SS: "Draw",
-         SR: "Cpu",
-         SP: "User"
-     };
- 
- 
-     let outComeValue = outComes[userValue + cpuValue];
- 
-     result.textContent = userValue === cpuValue ? "Match Draw" : `${outComeValue} Won!!`;
-     
-      
-}, 2500);
-
- 
-});
 });
 
 
